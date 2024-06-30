@@ -4,22 +4,36 @@ from langchain_core.messages import HumanMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 
 class LanguageModel:
-    def __init__(self, model_name="gpt-4o-2024-05-13"):
+    # TODO: Implement error handling
+    def __init__(self, model_name="gpt-3.5-turbo"):
         # TODO: save to DB or some shit
         self.store = {}
+
+        llm_model = ChatOpenAI(model=model_name)
+        prompt = ChatPromptTemplate.from_messages([(
+            "system",
+            "You are a helpful assistant. "
+            "Answer all questions to the best of your ability, "
+            "in the language of the question.",
+            ),
+            MessagesPlaceholder(variable_name="messages"),
+        ])
+        self.chain = prompt | llm_model
+
         self.llm_model = ChatOpenAI(model=model_name)
         self.with_message_history = RunnableWithMessageHistory(
-            self.llm_model,
+            self.chain,
             self.get_session_history
         )
 
     @staticmethod
     def create_session_id(contact: str) -> str:
         today = datetime.today().strftime('%Y-%m-%d')
-        return f"{contact}-{today}"
+        return f"{contact} {today}"
 
     def get_session_history(self, session_id: str) -> BaseChatMessageHistory:
         if session_id not in self.store:

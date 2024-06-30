@@ -8,6 +8,7 @@ from utils import randomize_wait
 
 
 class WhatsappDriver:
+    # TODO: Implement error handling
     def __init__(self) -> None:
         self.driver = uc.Chrome()
 
@@ -22,7 +23,7 @@ class WhatsappDriver:
         )
         print("Logged in successfully")
 
-    def open_contact_window(self, contact):
+    def open_chat_window(self, contact):
         # Search contact
         print(f"Getting contact: {contact}")
         time.sleep(randomize_wait())

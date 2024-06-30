@@ -1,31 +1,24 @@
-import os
+import time
 from whatsapp import WhatsappDriver
-from ai_llm import (
-    create_session_id,
-    get_llm_response
-)
+from ai_llm import LanguageModel
 from dotenv import load_dotenv
 from utils import is_prompt_message
 
 # load langchain and openai env vars
 load_dotenv(".env")
 
-LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
-LANGCHAIN_ENDPOINT = os.getenv("LANGCHAIN_ENDPOINT")
-LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT")
-
 # initialize
-contact = "Adrian"
+target_chat = "Adrian"
 last_msg = ""
 start_message = "JOJO is now online!"
 print(start_message)
 
 driver = WhatsappDriver()
 driver.start_webdriver_and_login()
-driver.open_contact_window(contact)
+driver.open_chat_window(target_chat)
 driver.send_message(start_message)
+
+language_model = LanguageModel()
 
 while True:
     latest_msg, contact = driver.get_latest_message_and_contact()
@@ -34,7 +27,11 @@ while True:
         if is_prompt_message(latest_msg):
             # check contact who sent message, check or make msg history,
             # get prompt and generate response
-            session_id = create_session_id(contact)
-            ai_message = get_llm_response(latest_msg, session_id)
-            driver.send_message(driver, ai_message)
+            session_id = language_model.create_session_id(contact)
+            ai_message = language_model.get_llm_response(
+                prompt=latest_msg,
+                session_id=session_id
+            )
+            driver.send_message(message=ai_message)
         last_msg = latest_msg
+    time.sleep(1)
