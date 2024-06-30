@@ -17,8 +17,7 @@ class LanguageModel:
         prompt = ChatPromptTemplate.from_messages([(
             "system",
             "You are a helpful assistant. "
-            "Answer all questions to the best of your ability, "
-            "in the language of the question.",
+            "Answer all questions to the best of your ability."
             ),
             MessagesPlaceholder(variable_name="messages"),
         ])
