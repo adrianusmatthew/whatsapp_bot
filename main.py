@@ -8,7 +8,7 @@ from utils import is_prompt_message
 load_dotenv(".env")
 
 # initialize
-target_chat = "Adrian"
+target_chat = "JJBA"
 last_msg = ""
 start_message = "JOJO is now online!"
 print(start_message)
