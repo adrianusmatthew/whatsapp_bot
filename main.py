@@ -28,10 +28,9 @@ while True:
             if is_prompt_message(latest_msg):
                 # check contact who sent message, check or make msg history,
                 # get prompt and generate response
-                session_id = language_model.create_session_id(contact)
                 ai_message = language_model.get_llm_response(
                     prompt=latest_msg,
-                    session_id=session_id
+                    session_id=contact
                 )
                 driver.send_message(message=ai_message)
         last_msg = latest_msg

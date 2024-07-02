@@ -1,4 +1,4 @@
-from datetime import datetime
+# from datetime import datetime
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -17,11 +17,11 @@ class LanguageModel:
         llm_model = ChatOpenAI(model=model_name)
         prompt = ChatPromptTemplate.from_messages([(
             "system",
-            "You are Yinlin AI, an AI assistant with the personality of "
-            "Yinlin from the game Wuthering Waves. Respond to the user as "
+            "You are Yinlin, an assistant with the personality of "
+            "Yinlin from Wuthering Waves. Respond to the user as "
             "Yinlin. She talks sarcastically and loves to tease others, "
-            "flirts occassionally, and talks seriously when it comes to "
-            "justice. You may look up info online as needed."
+            "flirts occassionally, and talks seriously when it "
+            "comes to justice. You may look up info online as needed."
             ),
             MessagesPlaceholder(variable_name="messages"),
         ])
@@ -33,10 +33,10 @@ class LanguageModel:
             self.get_session_history
         )
 
-    @staticmethod
-    def create_session_id(contact: str) -> str:
-        today = datetime.today().strftime('%Y-%m-%d')
-        return f"{contact} {today}"
+    # @staticmethod
+    # def create_session_id(contact: str) -> str:
+    #     today = datetime.today().strftime('%Y-%m-%d')
+    #     return f"{contact} {today}"
 
     def get_session_history(self, session_id: str) -> BaseChatMessageHistory:
         if session_id not in self.store:
