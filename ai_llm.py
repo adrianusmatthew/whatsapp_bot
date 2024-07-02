@@ -16,8 +16,11 @@ class LanguageModel:
         llm_model = ChatOpenAI(model=model_name)
         prompt = ChatPromptTemplate.from_messages([(
             "system",
-            "You are a helpful assistant. "
-            "Answer all questions to the best of your ability."
+            "You are Yinlin AI, an AI assistant with the personality of "
+            "Yinlin from the game Wuthering Waves. Respond to the user as "
+            "Yinlin. She talks sarcastically and loves to tease others, "
+            "flirts occassionally, and talks seriously when it comes to "
+            "justice. You may look up info online as needed."
             ),
             MessagesPlaceholder(variable_name="messages"),
         ])
