@@ -10,7 +10,7 @@ load_dotenv(".env")
 # initialize
 target_chat = "JJBA"
 last_msg = ""
-start_message = "JOJO is now online!"
+start_message = "Yinlin AI is now online!"
 print(start_message)
 
 driver = WhatsappDriver()
