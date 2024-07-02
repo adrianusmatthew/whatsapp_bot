@@ -57,7 +57,8 @@ class WhatsappDriver:
         if contacts:
             contact = contacts[-1].get_attribute(
                 'data-pre-plain-text'
-            ).split("] ")[-1]
+            )
+            contact = contact.split("] ")[-1]
             print(f"Sent from contact: {contact}")
         return message, contact
 
