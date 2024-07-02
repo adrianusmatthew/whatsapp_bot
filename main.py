@@ -34,7 +34,7 @@ while True:
                     session_id=session_id
                 )
                 driver.send_message(message=ai_message)
-            last_msg = latest_msg
+        last_msg = latest_msg
     except Exception as e:
         print("An error occurred: ", e)
     time.sleep(1)

@@ -5,6 +5,7 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from utils import filter_bmp_characters
 
 
 class LanguageModel:
@@ -52,4 +53,5 @@ class LanguageModel:
             [HumanMessage(content=prompt)],
             config=config,
         )
-        return response.content
+        llm_response = filter_bmp_characters(response.content)
+        return llm_response
