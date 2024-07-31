@@ -1,4 +1,3 @@
-# from datetime import datetime
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -34,22 +33,27 @@ class LanguageModel:
             self.get_session_history
         )
 
-    # @staticmethod
-    # def create_session_id(contact: str) -> str:
-    #     today = datetime.today().strftime('%Y-%m-%d')
-    #     return f"{contact} {today}"
-
     def get_session_history(self, session_id: str) -> BaseChatMessageHistory:
         if session_id not in self.store:
             self.store[session_id] = ChatMessageHistory()
         return self.store[session_id]
 
-    def get_llm_response(self, prompt: str, session_id: str) -> str:
+    def get_llm_response(
+        self, text: str, session_id: str, img_base64: str = ""
+    ) -> str:
         config = {
             "configurable": {
                 "session_id": session_id
             }
         }
+        prompt = [{"type": "text", "text": text}]
+        if img_base64:
+            prompt.append({
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{img_base64}"
+                }
+            })
         response = self.with_message_history.invoke(
             [HumanMessage(content=prompt)],
             config=config,

@@ -1,5 +1,5 @@
-import undetected_chromedriver as uc
 import time
+from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -10,7 +10,7 @@ from utils import randomize_wait
 class WhatsappDriver:
     # TODO: Implement error handling
     def __init__(self) -> None:
-        self.driver = uc.Chrome()
+        self.driver = webdriver.Chrome()
 
     def start_webdriver_and_login(self):
         self.driver.get('https://web.whatsapp.com')
@@ -40,6 +40,7 @@ class WhatsappDriver:
     def get_latest_message_and_contact(self):
         message = ""
         contact = ""
+        img_url = ""
         print("Getting latest message and contact")
 
         # get all messages and take last sent message
@@ -49,6 +50,13 @@ class WhatsappDriver:
         if messages:
             message = messages[-1].text
             print(f"Latest message: {message}")
+            # apparently img alt for messages with img is the message itself
+            sent_img = self.driver.find_elements(
+                By.CSS_SELECTOR, f'div.message-in img[alt="{message}"]'
+            )
+            if sent_img:
+                img_url = sent_img[-1].get_attribute('src')
+                print(f"With img: {img_url}")
 
         # get all contacts and take last contact
         contacts = self.driver.find_elements(
@@ -58,9 +66,9 @@ class WhatsappDriver:
             contact = contacts[-1].get_attribute(
                 'data-pre-plain-text'
             )
-            contact = contact.split("] ")[-1]
+            contact = contact.split("] ")[-1].split(":")[0]
             print(f"Sent from contact: {contact}")
-        return message, contact
+        return message, img_url, contact
 
     def send_message(self, message):
         print(f"Sending message: {message}")
@@ -75,3 +83,38 @@ class WhatsappDriver:
         time.sleep(randomize_wait())
         message_box.send_keys(Keys.ENTER)
         time.sleep(randomize_wait())
+
+    def get_image_base64(self, img_url):
+        # this function opens img blob in new tab, gets the base64
+        # of it, then closes tab
+        self.driver.execute_script(f'window.open("{img_url}");')
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        time.sleep(randomize_wait())
+        result = self.driver.execute_async_script("""
+            var uri = arguments[0];
+            var callback = arguments[1];
+            var toBase64 = function(buffer) {
+                for (var r, n = new Uint8Array(buffer), t = n.length, a = new Uint8Array(4 * Math.ceil(t / 3)), i = new Uint8Array(64), o = 0, c = 0; 64 > c; ++c)
+                    i[c] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charCodeAt(c);
+                for (c = 0; t - t % 3 > c; c += 3, o += 4)
+                    r = n[c] << 16 | n[c + 1] << 8 | n[c + 2],
+                    a[o] = i[r >> 18],
+                    a[o + 1] = i[r >> 12 & 63],
+                    a[o + 2] = i[r >> 6 & 63],
+                    a[o + 3] = i[63 & r];
+                return t % 3 === 1 ? (r = n[t - 1], a[o] = i[r >> 2], a[o + 1] = i[r << 4 & 63], a[o + 2] = 61, a[o + 3] = 61) : t % 3 === 2 && (r = (n[t - 2] << 8) + n[t - 1], a[o] = i[r >> 10], a[o + 1] = i[r >> 4 & 63], a[o + 2] = i[r << 2 & 63], a[o + 3] = 61),
+                new TextDecoder("ascii").decode(a);
+            };
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'arraybuffer';
+            xhr.onload = function() { callback(toBase64(xhr.response)); };
+            xhr.onerror = function() { callback(xhr.status); };
+            xhr.open('GET', uri);
+            xhr.send();
+            """, img_url)
+        if isinstance(result, int):
+            raise Exception("Request failed with status %s" % result)
+        time.sleep(randomize_wait())
+        self.driver.close()
+        self.driver.switch_to.window(self.driver.window_handles[0])
+        return result

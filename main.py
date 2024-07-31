@@ -22,15 +22,21 @@ language_model = LanguageModel()
 
 while True:
     try:
-        latest_msg, contact = driver.get_latest_message_and_contact()
+        latest_msg, img_url, contact = driver.get_latest_message_and_contact()
         if latest_msg and latest_msg != last_msg:
             print(f"New message received from {contact}: {latest_msg}")
+            if img_url:
+                print(f"With img: {img_url}")
+                img_base64 = driver.get_image_base64(img_url)
+            else:
+                img_base64 = ""
             if is_prompt_message(latest_msg):
                 # check contact who sent message, check or make msg history,
                 # get prompt and generate response
                 ai_message = language_model.get_llm_response(
-                    prompt=latest_msg,
-                    session_id=contact
+                    text=f"{contact} said: {latest_msg}",
+                    session_id=contact,
+                    img_base64=img_base64
                 )
                 driver.send_message(message=ai_message)
         last_msg = latest_msg
