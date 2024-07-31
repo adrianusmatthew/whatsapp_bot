@@ -35,7 +35,7 @@ while True:
                 # get prompt and generate response
                 ai_message = language_model.get_llm_response(
                     text=f"{contact} said: {latest_msg}",
-                    session_id=contact,
+                    session_id=target_chat,
                     img_base64=img_base64
                 )
                 driver.send_message(message=ai_message)
