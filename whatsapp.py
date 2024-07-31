@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
 from utils import randomize_wait
 
 
@@ -35,6 +36,51 @@ class WhatsappDriver:
         # This should open message window immediately
         search_box.send_keys(contact)
         search_box.send_keys(Keys.ENTER)
+        # Now to clear search box for next search
+        time.sleep(randomize_wait())
+        cancel_search_button = self.driver.find_element(
+            By.CSS_SELECTOR,
+            'button[aria-label*="Cancel search"]'
+        )
+        cancel_search_button.click()
+
+    def close_chat_window(self):
+        menu_button = self.driver.find_element(By.CSS_SELECTOR, 'div[role="button"][aria-disabled="false"][data-tab="6"][title="Menu"]')
+        menu_button.click()
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((
+                By.CSS_SELECTOR, 'div[aria-label="Close chat"]'
+            ))
+        )
+        close_chat_button = self.driver.find_element(By.CSS_SELECTOR, 'div[aria-label="Close chat"]')
+        close_chat_button.click()
+
+    def get_unread_contacts(self):
+        unread_contacts = []
+        try:
+            # Locate the elements that indicate unread messages
+            WebDriverWait(self.driver, 60).until(
+                EC.presence_of_element_located((
+                    By.CSS_SELECTOR, 'span[aria-label*="unread message"]'
+                ))
+            )
+            unread_elements = self.driver.find_elements(
+                By.CSS_SELECTOR, 'span[aria-label*="unread message"]'
+            )
+            for element in unread_elements:
+                # Navigate to the contact's parent element to 
+                # get the contact name or other info
+                contact_element = element.find_element(
+                    By.XPATH, './../../../../../div/div'
+                )
+                contact_name = contact_element.find_element(
+                    By.CSS_SELECTOR, 'span[title]'
+                ).text
+                unread_contacts.append(contact_name)
+        except TimeoutException:
+            pass
+
+        return unread_contacts
 
     def get_latest_message_and_contact(self):
         message = ""
