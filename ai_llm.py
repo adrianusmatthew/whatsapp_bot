@@ -8,9 +8,7 @@ from utils import filter_bmp_characters
 
 
 class LanguageModel:
-    # TODO: Implement error handling
     def __init__(self, model_name="gpt-4o"):
-        # TODO: save to DB or some shit
         self.store = {}
 
         llm_model = ChatOpenAI(model=model_name)

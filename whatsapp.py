@@ -8,7 +8,6 @@ from utils import randomize_wait
 
 
 class WhatsappDriver:
-    # TODO: Implement error handling
     def __init__(self) -> None:
         self.driver = webdriver.Chrome()
 
