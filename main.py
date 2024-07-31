@@ -1,3 +1,4 @@
+import traceback
 import time
 from whatsapp import WhatsappDriver
 from ai_llm import LanguageModel
@@ -40,6 +41,6 @@ while True:
                 )
                 driver.send_message(message=ai_message)
         last_msg = latest_msg
-    except Exception as e:
-        print("An error occurred: ", e)
+    except Exception:
+        traceback.print_exc()
     time.sleep(1)

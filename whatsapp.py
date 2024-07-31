@@ -50,9 +50,8 @@ class WhatsappDriver:
         if messages:
             message = messages[-1].text
             print(f"Latest message: {message}")
-            # apparently img alt for messages with img is the message itself
             sent_img = self.driver.find_elements(
-                By.CSS_SELECTOR, f'div.message-in img[alt="{message}"]'
+                By.CSS_SELECTOR, 'div.message-in img.x15kfjtz'
             )
             if sent_img:
                 img_url = sent_img[-1].get_attribute('src')
