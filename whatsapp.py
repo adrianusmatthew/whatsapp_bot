@@ -52,10 +52,11 @@ class WhatsappDriver:
             sent_img = self.driver.find_elements(
                 By.CSS_SELECTOR, 'div.message-in img.x15kfjtz'
             )
-            sent_img = sent_img[-1]
-            if sent_img and sent_img.get_attribute("alt") == message:
-                img_url = sent_img.get_attribute('src')
-                print(f"With img: {img_url}")
+            if sent_img:
+                sent_img = sent_img[-1]
+                if sent_img.get_attribute("alt") == message:
+                    img_url = sent_img.get_attribute('src')
+                    print(f"With img: {img_url}")
 
         # get all contacts and take last contact
         contacts = self.driver.find_elements(
