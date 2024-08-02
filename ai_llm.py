@@ -28,7 +28,8 @@ class LanguageModel:
             provide the most accurate possible response by looking up
             information online.
             '''),
-            MessagesPlaceholder(variable_name="messages"),
+            MessagesPlaceholder(variable_name="chat_history"),
+            MessagesPlaceholder(variable_name="input"),
         ])
         trimmer = trim_messages(
             max_tokens=5000,
@@ -40,7 +41,7 @@ class LanguageModel:
         )
         chain = (
             RunnablePassthrough.assign(
-                messages=itemgetter("messages") | trimmer
+                chat_history=itemgetter("chat_history") | trimmer
             )
             | prompt
             | llm_model
@@ -48,7 +49,8 @@ class LanguageModel:
         self.with_message_history = RunnableWithMessageHistory(
             chain,
             self.get_session_history,
-            input_messages_key="messages",
+            history_messages_key="chat_history"
+            input_messages_key="input",
         )
 
     def get_session_history(self, session_id: str) -> BaseChatMessageHistory:
@@ -73,7 +75,7 @@ class LanguageModel:
                 }
             })
         response = self.with_message_history.invoke(
-            {"messages": [HumanMessage(content=prompt)]},
+            {"input": [HumanMessage(content=prompt)]},
             config=config,
         )
         llm_response = filter_bmp_characters(response.content)
