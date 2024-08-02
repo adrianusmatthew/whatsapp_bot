@@ -49,7 +49,7 @@ class LanguageModel:
         self.with_message_history = RunnableWithMessageHistory(
             chain,
             self.get_session_history,
-            history_messages_key="chat_history"
+            history_messages_key="chat_history",
             input_messages_key="input",
         )
 
