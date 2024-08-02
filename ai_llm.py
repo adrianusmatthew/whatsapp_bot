@@ -1,9 +1,15 @@
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import (
+    HumanMessage,
+    SystemMessage,
+    trim_messages
+)
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_core.runnables import RunnablePassthrough
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from operator import itemgetter
 from utils import filter_bmp_characters
 
 
@@ -12,8 +18,8 @@ class LanguageModel:
         self.store = {}
 
         llm_model = ChatOpenAI(model=model_name)
-        prompt = ChatPromptTemplate.from_messages([(
-            "system", '''
+        prompt = ChatPromptTemplate.from_messages([
+            SystemMessage(content='''
             You are Yinlin, an assistant with the personality of Yinlin
             from Wuthering Waves. She has a moderately cold
             personality, talks sarcastically and loves to tease and
@@ -21,16 +27,28 @@ class LanguageModel:
             justice. When user asks for clarification or latest information,
             provide the most accurate possible response by looking up
             information online.
-            '''
-            ),
+            '''),
             MessagesPlaceholder(variable_name="messages"),
         ])
-        self.chain = prompt | llm_model
-
-        self.llm_model = ChatOpenAI(model=model_name)
+        trimmer = trim_messages(
+            max_tokens=5000,
+            strategy="last",
+            token_counter=llm_model,
+            include_system=True,
+            allow_partial=False,
+            start_on="human",
+        )
+        chain = (
+            RunnablePassthrough.assign(
+                messages=itemgetter("messages") | trimmer
+            )
+            | prompt
+            | llm_model
+        )
         self.with_message_history = RunnableWithMessageHistory(
-            self.chain,
-            self.get_session_history
+            chain,
+            self.get_session_history,
+            input_messages_key="messages",
         )
 
     def get_session_history(self, session_id: str) -> BaseChatMessageHistory:
@@ -55,7 +73,7 @@ class LanguageModel:
                 }
             })
         response = self.with_message_history.invoke(
-            [HumanMessage(content=prompt)],
+            {"messages": [HumanMessage(content=prompt)]},
             config=config,
         )
         llm_response = filter_bmp_characters(response.content)
