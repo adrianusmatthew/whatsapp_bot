@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 from utils import is_prompt_message
 
 # load env vars and initialize in general
-load_dotenv(".env")
-start_message = "Yinlin AI is now online!"
+load_dotenv("serina_ai.env")
+start_message = "Serina AI is now online!"
 print(start_message)
 language_model = LanguageModel()
 driver = WhatsappDriver()
@@ -70,15 +70,13 @@ elif operation_type.lower() == "multiple":
                             print(f"With img: {img_url}")
                             img_base64 = driver.get_image_base64(img_url)
                         else:
-                            img_base64 = ""
-                        # check if latest msg is prompt msg
-                        if is_prompt_message(latest_msg):
-                            ai_message = language_model.get_llm_response(
-                                text=latest_msg_from_contact,
-                                session_id=unread_contact,
-                                img_base64=img_base64
-                            )
-                            driver.send_message(message=ai_message)
+                            img_base64 = "":
+                        ai_message = language_model.get_llm_response(
+                            text=latest_msg_from_contact,
+                            session_id=unread_contact,
+                            img_base64=img_base64
+                        )
+                        driver.send_message(message=ai_message)
                         last_msg_dict[unread_contact] = latest_msg_from_contact
                     driver.close_chat_window()
             pp.pprint(last_msg_dict)
