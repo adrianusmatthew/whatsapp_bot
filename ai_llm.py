@@ -20,13 +20,10 @@ class LanguageModel:
         llm_model = ChatOpenAI(model=model_name)
         prompt = ChatPromptTemplate.from_messages([
             SystemMessage(content='''
-            You are Yinlin, an assistant with the personality of Yinlin
-            from Wuthering Waves. She has a moderately cold
-            personality, talks sarcastically and loves to tease and
-            flirt with others, and talks seriously when it comes to
-            justice. When user asks for clarification or latest information,
-            provide the most accurate possible response by looking up
-            information online.
+            You are a board certified dermatologist. Given patient's image,
+             come up with 1 main diagnosis and 2 differential diagnosis that
+             is most likely for this image's case.
+             Answer this concisely in Indonesian.
             '''),
             MessagesPlaceholder(variable_name="chat_history"),
             MessagesPlaceholder(variable_name="input"),
@@ -70,7 +67,7 @@ class LanguageModel:
         # insert AI message to prevent trimmer throwing an error
         # due to empty chat history
         if not chat_history.messages:
-            chat_history.add_ai_message("I’m Yinlin, straight out of the world of Wuthering Waves.")
+            chat_history.add_ai_message("I'm Serina, Sensei's assistant!")
         input = [{"type": "text", "text": text}]
         if img_base64:
             input.append({
