@@ -32,9 +32,9 @@ class LanguageModel:
             MessagesPlaceholder(variable_name="input"),
         ])
         trimmer = trim_messages(
-            max_tokens=5000,
+            max_tokens=30,
             strategy="last",
-            token_counter=llm_model,
+            token_counter=len,
             include_system=True,
             allow_partial=False,
             start_on="human",
@@ -66,16 +66,23 @@ class LanguageModel:
                 "session_id": session_id
             }
         }
-        prompt = [{"type": "text", "text": text}]
+        chat_history = self.get_session_history(session_id)
+        # insert AI message to prevent trimmer throwing an error
+        # due to empty chat history
+        if not chat_history.messages:
+            chat_history.add_ai_message("I’m Yinlin, straight out of the world of Wuthering Waves.")
+        input = [{"type": "text", "text": text}]
         if img_base64:
-            prompt.append({
+            input.append({
                 "type": "image_url",
                 "image_url": {
                     "url": f"data:image/jpeg;base64,{img_base64}"
                 }
             })
         response = self.with_message_history.invoke(
-            {"input": [HumanMessage(content=prompt)]},
+            {
+                "input": [HumanMessage(content=input)]
+            },
             config=config,
         )
         llm_response = filter_bmp_characters(response.content)
