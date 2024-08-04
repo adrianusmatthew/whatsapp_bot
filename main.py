@@ -70,7 +70,7 @@ elif operation_type.lower() == "multiple":
                             print(f"With img: {img_url}")
                             img_base64 = driver.get_image_base64(img_url)
                         else:
-                            img_base64 = "":
+                            img_base64 = ""
                         ai_message = language_model.get_llm_response(
                             text=latest_msg_from_contact,
                             session_id=unread_contact,
