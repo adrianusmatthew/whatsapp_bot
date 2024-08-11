@@ -61,11 +61,11 @@ class WhatsappDriver:
             # Locate the elements that indicate unread messages
             WebDriverWait(self.driver, 60).until(
                 EC.presence_of_element_located((
-                    By.CSS_SELECTOR, 'span[aria-label*="unread message"]'
+                    By.CSS_SELECTOR, 'div._ahlk span[aria-label*="unread message"]'
                 ))
             )
             unread_elements = self.driver.find_elements(
-                By.CSS_SELECTOR, 'span[aria-label*="unread message"]'
+                By.CSS_SELECTOR, 'div._ahlk span[aria-label*="unread message"]'
             )
             for element in unread_elements:
                 # Navigate to the contact's parent element to 
