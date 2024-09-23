@@ -1,7 +1,10 @@
 from langchain_openai import ChatOpenAI
+from langchain_community.utilities import GoogleSerperAPIWrapper
+from langchain_core.tools import tool
 from langchain_core.messages import (
     HumanMessage,
     SystemMessage,
+    AIMessage,
     trim_messages
 )
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -18,6 +21,20 @@ class LanguageModel:
         self.store = {}
 
         llm_model = ChatOpenAI(model=model_name)
+
+        @tool
+        def search_tool(search_term: str) -> str:
+            """Useful for when you need to answer questions with search."""
+            google_search = GoogleSerperAPIWrapper()
+            return google_search.run(search_term)
+
+        tools = [search_tool]
+        self.tool_dict = {
+            "search_tool": search_tool
+        }
+
+        llm_model_with_tools = llm_model.bind_tools(tools)
+
         prompt = ChatPromptTemplate.from_messages([
             SystemMessage(content='''
             You are Yinlin, an assistant with the personality of Yinlin
@@ -26,7 +43,7 @@ class LanguageModel:
             flirt with others, and talks seriously when it comes to
             justice. When user asks for clarification or latest information,
             provide the most accurate possible response by looking up
-            information online.
+            information online with the tool provided.
             '''),
             MessagesPlaceholder(variable_name="chat_history"),
             MessagesPlaceholder(variable_name="input"),
@@ -44,7 +61,7 @@ class LanguageModel:
                 chat_history=itemgetter("chat_history") | trimmer
             )
             | prompt
-            | llm_model
+            | llm_model_with_tools
         )
         self.with_message_history = RunnableWithMessageHistory(
             chain,
@@ -60,7 +77,8 @@ class LanguageModel:
 
     def get_llm_response(
         self, text: str, session_id: str, img_base64: str = ""
-    ) -> str:
+    ) -> list[str]:
+        gathered_response = []
         config = {
             "configurable": {
                 "session_id": session_id
@@ -71,7 +89,7 @@ class LanguageModel:
         # due to empty chat history
         if not chat_history.messages:
             chat_history.add_ai_message("I’m Yinlin, straight out of the world of Wuthering Waves.")
-        input = [{"type": "text", "text": text}]
+        input = [{"type": "text", "text": text + ", respond as Yinlin."}]
         if img_base64:
             input.append({
                 "type": "image_url",
@@ -85,5 +103,25 @@ class LanguageModel:
             },
             config=config,
         )
-        llm_response = filter_bmp_characters(response.content)
-        return llm_response
+        gathered_response.append(response.content)
+
+        # handle when AI determines tool needs to be called
+        if response.tool_calls:
+            for tool_call in response.tool_calls:
+                selected_tool = self.tool_dict[tool_call["name"].lower()]
+                tool_msg = selected_tool.invoke(tool_call)
+                chat_history.add_message(tool_msg)
+
+            after_tool_response = self.with_message_history.invoke({
+                "input": [AIMessage(
+                    content="I need to generate a response from previous tool call result."
+                )]
+            }, config=config)
+            gathered_response.append(after_tool_response.content)
+
+        final_response = []
+        for response in gathered_response:
+            response = filter_bmp_characters(response)
+            final_response.append(response)
+
+        return final_response
