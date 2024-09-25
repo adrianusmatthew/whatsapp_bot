@@ -106,7 +106,7 @@ class LanguageModel:
         gathered_response.append(response.content)
 
         # handle when AI determines tool needs to be called
-        if response.tool_calls:
+        while response.tool_calls:
             for tool_call in response.tool_calls:
                 selected_tool = self.tool_dict[tool_call["name"].lower()]
                 tool_msg = selected_tool.invoke(tool_call)
@@ -118,6 +118,7 @@ class LanguageModel:
                 )]
             }, config=config)
             gathered_response.append(after_tool_response.content)
+            response = after_tool_response
 
         final_response = []
         for response in gathered_response:
