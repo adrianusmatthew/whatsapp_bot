@@ -45,7 +45,7 @@ class WhatsappDriver:
         cancel_search_button.click()
 
     def close_chat_window(self):
-        menu_button = self.driver.find_element(By.CSS_SELECTOR, 'div[role="button"][aria-disabled="false"][data-tab="6"][title="Menu"]')
+        menu_button = self.driver.find_element(By.CSS_SELECTOR, 'button[role="button"][aria-disabled="false"][data-tab="6"][title="Menu"]')
         menu_button.click()
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((
