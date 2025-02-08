@@ -35,12 +35,13 @@ if operation_type.lower() == "single":
                 if is_prompt_message(latest_msg):
                     # check contact who sent message, check or make
                     # msg history, get prompt and generate response
-                    ai_message = language_model.get_llm_response(
+                    ai_messages = language_model.get_llm_response(
                         text=f"{contact} said: {latest_msg}",
                         session_id=target_chat,
                         img_base64=img_base64
                     )
-                    driver.send_message(message=ai_message)
+                    for ai_message in ai_messages:
+                        driver.send_message(message=ai_message)
             last_msg = latest_msg
         except Exception:
             traceback.print_exc()
