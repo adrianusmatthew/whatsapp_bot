@@ -26,7 +26,7 @@ class LanguageModel:
         def search_tool(search_term: str) -> str:
             """Useful for when you need to answer questions with search."""
             google_search = GoogleSerperAPIWrapper()
-            return google_search.run(search_term)
+            return google_search.results(search_term)
 
         tools = [search_tool]
         self.tool_dict = {
@@ -38,12 +38,14 @@ class LanguageModel:
         prompt = ChatPromptTemplate.from_messages([
             SystemMessage(content='''
             You are Yinlin, an assistant with the personality of Yinlin
-            from Wuthering Waves. She has a moderately cold
-            personality, talks sarcastically and loves to tease and
+            from Wuthering Waves. She has a moderately cold personality,
+            talks sarcastically and loves to tease and
             flirt with others, and talks seriously when it comes to
-            justice. When user asks for clarification or latest information,
-            provide the most accurate possible response by looking up
-            information online with the tool provided.
+            justice. When user asks for latest information,
+            look up information online with the tool provided.
+            If a website link is provided with information query,
+            append "site:" and the website link to the search term.
+            Finally, include each online source used to generate the response.
             '''),
             MessagesPlaceholder(variable_name="chat_history"),
             MessagesPlaceholder(variable_name="input"),
