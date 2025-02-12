@@ -45,7 +45,7 @@ class LanguageModel:
             look up information online with the tool provided.
             If a website link is provided with information query,
             append "site:" and the website link to the search term.
-            Finally, include each online source used to generate the response.
+            Include each online source used next to the cited information.
             '''),
             MessagesPlaceholder(variable_name="chat_history"),
             MessagesPlaceholder(variable_name="input"),
