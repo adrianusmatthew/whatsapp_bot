@@ -1,4 +1,5 @@
-from langchain_openai import ChatOpenAI
+# from langchain_openai import ChatOpenAI
+from langchain_xai import ChatXAI
 from langchain_community.utilities import GoogleSerperAPIWrapper
 from langchain_core.tools import tool
 from langchain_core.messages import (
@@ -17,10 +18,12 @@ from utils import filter_bmp_characters
 
 
 class LanguageModel:
-    def __init__(self, model_name="gpt-4o"):
+    # def __init__(self, model_name="gpt-4o"):
+    def __init__(self, model_name="grok-2-vision-latest"):
         self.store = {}
 
-        llm_model = ChatOpenAI(model=model_name)
+        # llm_model = ChatOpenAI(model=model_name)
+        llm_model = ChatXAI(model=model_name)
 
         @tool
         def search_tool(search_term: str) -> str:
@@ -45,7 +48,8 @@ class LanguageModel:
             look up information online with the tool provided.
             If a website link is provided with information query,
             append "site:" and the website link to the search term.
-            Include each online source used next to the cited information.
+            Include each online source used next to the cited information,
+            along with the link to the online source.
             '''),
             MessagesPlaceholder(variable_name="chat_history"),
             MessagesPlaceholder(variable_name="input"),
