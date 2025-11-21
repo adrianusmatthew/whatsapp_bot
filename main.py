@@ -81,7 +81,7 @@ elif operation_type.lower() == "multiple":
                             )
                             driver.send_message(message=ai_message)
                         last_msg_dict[unread_contact] = latest_msg_from_contact
-                    driver.close_chat_window()
+                    # driver.close_chat_window()
             pp.pprint(last_msg_dict)
         except Exception:
             traceback.print_exc()
