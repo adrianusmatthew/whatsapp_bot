@@ -10,7 +10,9 @@ from utils import randomize_wait
 
 class WhatsappDriver:
     def __init__(self) -> None:
-        self.driver = webdriver.Chrome()
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--disable-gpu")
+        self.driver = webdriver.Chrome(options=chrome_options)
 
     def start_webdriver_and_login(self):
         self.driver.get('https://web.whatsapp.com')
