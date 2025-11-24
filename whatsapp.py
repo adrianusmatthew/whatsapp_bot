@@ -12,12 +12,33 @@ class WhatsappDriver:
     def __init__(self) -> None:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=chrome_options)
 
     def start_webdriver_and_login(self):
         self.driver.get('https://web.whatsapp.com')
-        # Await user to login with QR code until search bar shows up
-        print("Please scan the QR code to log in to WhatsApp Web.")
+        # Login with phone number entry
+        login_button = self.driver.find_element(By.XPATH, "//*[contains(text(),'Log in with phone number')]")
+        login_button.click()
+        # Ask user for phone number input, send keys
+        phone_number = input("Enter phone number with country code: ")
+        phone_number_input = self.driver.find_element(By.CSS_SELECTOR, 'input.selectable-text[aria-label="Type your phone number."]')
+        time.sleep(randomize_wait())
+        phone_number_input.send_keys(Keys.CONTROL + 'a')
+        time.sleep(randomize_wait())
+        phone_number_input.send_keys(Keys.DELETE)
+        time.sleep(randomize_wait())
+        phone_number_input.send_keys(phone_number)
+        time.sleep(randomize_wait())
+        next_button = self.driver.find_element(By.XPATH, "//div[contains(text(), 'Next')]")
+        next_button.click()
+        # Show verification code to user
+        verification_code_elem = self.driver.find_element(
+            By.CSS_SELECTOR,
+            "div[aria-details='link-device-phone-number-code-screen-instructions']"
+        )
+        verification_code = verification_code_elem.get_attribute('data-link-code')
+        print(f"Input this code into Linked Devices menu (choose Link with phone number instead): {verification_code}")
         WebDriverWait(self.driver, 60).until(
             EC.presence_of_element_located((
                 By.CSS_SELECTOR, 'div[data-tab="3"]'
