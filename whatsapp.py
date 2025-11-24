@@ -18,7 +18,11 @@ class WhatsappDriver:
 
     def start_webdriver_and_login(self):
         self.driver.get('https://web.whatsapp.com')
-        time.sleep(3)
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((
+                By.XPATH, "//*[contains(text(),'Log in with phone number')]"
+            ))
+        )
         # Login with phone number entry
         login_button = self.driver.find_element(By.XPATH, "//*[contains(text(),'Log in with phone number')]")
         login_button.click()
