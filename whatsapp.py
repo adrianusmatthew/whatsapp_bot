@@ -23,6 +23,7 @@ class WhatsappDriver:
                 By.XPATH, "//*[contains(text(),'Log in with phone number')]"
             ))
         )
+        time.sleep(5)
         # Login with phone number entry
         login_button = self.driver.find_element(By.XPATH, "//*[contains(text(),'Log in with phone number')]")
         login_button.click()
