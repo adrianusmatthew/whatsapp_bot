@@ -33,6 +33,7 @@ ENV/
 env/
 .venv/
 .env/
+*_env/
 whatsapp_bot/
 
 # PyInstaller
