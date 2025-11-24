@@ -7,7 +7,7 @@ def randomize_wait() -> float:
 
 
 def is_prompt_message(message: str) -> bool:
-    prompts = ["hey yinlin", "hi yinlin", "hello yinlin"]
+    prompts = ["hey shorekeeper", "hi shorekeeper", "hello shorekeeper"]
     for prompt in prompts:
         if message.lower().startswith(prompt):
             return True
