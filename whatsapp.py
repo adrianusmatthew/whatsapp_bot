@@ -18,10 +18,11 @@ class WhatsappDriver:
 
     def start_webdriver_and_login(self):
         self.driver.get('https://web.whatsapp.com')
-        time.sleep(6.23)
+        time.sleep(3)
         # Login with phone number entry
         login_button = self.driver.find_element(By.XPATH, "//*[contains(text(),'Log in with phone number')]")
         login_button.click()
+        time.sleep(randomize_wait())
         # Ask user for phone number input, send keys
         phone_number = input("Enter phone number with country code: ")
         phone_number_input = self.driver.find_element(By.CSS_SELECTOR, 'input.selectable-text[aria-label="Type your phone number."]')
