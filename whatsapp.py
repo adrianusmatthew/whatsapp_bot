@@ -24,6 +24,11 @@ class WhatsappDriver:
         login_button.click()
         time.sleep(randomize_wait())
         # Ask user for phone number input, send keys
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((
+                By.CSS_SELECTOR, 'input.selectable-text[aria-label="Type your phone number."]'
+            ))
+        )
         phone_number = input("Enter phone number with country code: ")
         phone_number_input = self.driver.find_element(By.CSS_SELECTOR, 'input.selectable-text[aria-label="Type your phone number."]')
         time.sleep(randomize_wait())
@@ -37,6 +42,11 @@ class WhatsappDriver:
         next_button.click()
         time.sleep(randomize_wait())
         # Show verification code to user
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((
+                By.CSS_SELECTOR, "div[aria-details='link-device-phone-number-code-screen-instructions']"
+            ))
+        )
         verification_code_elem = self.driver.find_element(
             By.CSS_SELECTOR,
             "div[aria-details='link-device-phone-number-code-screen-instructions']"
