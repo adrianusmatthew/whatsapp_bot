@@ -12,8 +12,8 @@ class WhatsappDriver:
     def __init__(self) -> None:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--headless=new")
-        chrome_options.add_argument("--window-size=1920,1080")
+        # chrome_options.add_argument("--headless=new")
+        # chrome_options.add_argument("--window-size=1920,1080")
         self.driver = webdriver.Chrome(options=chrome_options)
 
     def start_webdriver_and_login(self):
@@ -35,6 +35,7 @@ class WhatsappDriver:
         time.sleep(randomize_wait())
         next_button = self.driver.find_element(By.XPATH, "//div[contains(text(), 'Next')]")
         next_button.click()
+        time.sleep(randomize_wait())
         # Show verification code to user
         verification_code_elem = self.driver.find_element(
             By.CSS_SELECTOR,
