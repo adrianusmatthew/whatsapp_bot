@@ -12,8 +12,8 @@ class WhatsappDriver:
     def __init__(self) -> None:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--disable-gpu")
-        # chrome_options.add_argument("--headless=new")
-        # chrome_options.add_argument("--window-size=1920,1080")
+        chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--window-size=1920,1080")
         self.driver = webdriver.Chrome(options=chrome_options)
 
     def start_webdriver_and_login(self):
