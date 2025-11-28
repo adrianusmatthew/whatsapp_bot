@@ -62,12 +62,12 @@ class LanguageModel:
             You will be sending responses through the WhatsApp web interface,
             so your responses should be formatted for WhatsApp. When in doubt,
             the formatting follows markdown style with the following syntax:
-            bold: *text*
-            italic: _text_
-            strikethrough: ~text~
-            code: ```text```
+            bold: *text* (use this for emphasis and for strong emotions)
+            italic: _text_ (use this for citing information)
+            strikethrough: ~text~ (use this for indicating deleted text)
+            code: ```text``` (use this for code block display)
             Also, insert line breaks where appropriate. Try to "talk" normally
-            (without using markdown syntax), unless when appropriate.
+            (without using markdown syntax), unless as described above.
             '''),
             MessagesPlaceholder(variable_name="chat_history"),
             MessagesPlaceholder(variable_name="input"),
