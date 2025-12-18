@@ -18,46 +18,7 @@ class WhatsappDriver:
 
     def start_webdriver_and_login(self):
         self.driver.get('https://web.whatsapp.com')
-        # WebDriverWait(self.driver, 60).until(
-        #     EC.presence_of_element_located((
-        #         By.XPATH, "//*[contains(text(),'Log in with phone number')]"
-        #     ))
-        # )
-        # time.sleep(5)
-        # # Login with phone number entry
-        # login_button = self.driver.find_element(By.XPATH, "//*[contains(text(),'Log in with phone number')]")
-        # login_button.click()
-        # time.sleep(randomize_wait())
-        # # Ask user for phone number input, send keys
-        # WebDriverWait(self.driver, 60).until(
-        #     EC.presence_of_element_located((
-        #         By.CSS_SELECTOR, 'input.selectable-text[aria-label="Type your phone number."]'
-        #     ))
-        # )
-        # phone_number = input("Enter phone number with country code: ")
-        # phone_number_input = self.driver.find_element(By.CSS_SELECTOR, 'input.selectable-text[aria-label="Type your phone number."]')
-        # time.sleep(randomize_wait())
-        # phone_number_input.send_keys(Keys.CONTROL + 'a')
-        # time.sleep(randomize_wait())
-        # phone_number_input.send_keys(Keys.DELETE)
-        # time.sleep(randomize_wait())
-        # phone_number_input.send_keys(phone_number)
-        # time.sleep(randomize_wait())
-        # next_button = self.driver.find_element(By.XPATH, "//div[contains(text(), 'Next')]")
-        # next_button.click()
-        # time.sleep(randomize_wait())
-        # # Show verification code to user
-        # WebDriverWait(self.driver, 60).until(
-        #     EC.presence_of_element_located((
-        #         By.CSS_SELECTOR, "div[aria-details='link-device-phone-number-code-screen-instructions']"
-        #     ))
-        # )
-        # verification_code_elem = self.driver.find_element(
-        #     By.CSS_SELECTOR,
-        #     "div[aria-details='link-device-phone-number-code-screen-instructions']"
-        # )
-        # verification_code = verification_code_elem.get_attribute('data-link-code')
-        # print(f"Input this code into Linked Devices menu (choose Link with phone number instead): {verification_code}")
+        print("Please scan the QR code to login.")
         WebDriverWait(self.driver, 60).until(
             EC.presence_of_element_located((
                 By.CSS_SELECTOR, 'div[data-tab="3"]'
@@ -86,16 +47,16 @@ class WhatsappDriver:
         )
         cancel_search_button.click()
 
-    # def close_chat_window(self):
-    #     menu_button = self.driver.find_element(By.CSS_SELECTOR, 'button[role="button"][aria-disabled="false"][data-tab="6"][title="Menu"]')
-    #     menu_button.click()
-    #     WebDriverWait(self.driver, 10).until(
-    #         EC.presence_of_element_located((
-    #             By.CSS_SELECTOR, 'div[aria-label="Close chat"]'
-    #         ))
-    #     )
-    #     close_chat_button = self.driver.find_element(By.CSS_SELECTOR, 'div[aria-label="Close chat"]')
-    #     close_chat_button.click()
+    def close_chat_window(self):
+        menu_button = self.driver.find_elements(By.CSS_SELECTOR, 'button[type="button"][aria-label="Menu"]')[-1]
+        menu_button.click()
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((
+                By.XPATH, "//*[contains(text(),'Close chat')]"
+            ))
+        )
+        close_chat_button = self.driver.find_element(By.XPATH, "//*[contains(text(),'Close chat')]")
+        close_chat_button.click()
 
     def get_unread_contacts(self):
         unread_contacts = []
