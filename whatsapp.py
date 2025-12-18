@@ -132,10 +132,10 @@ class WhatsappDriver:
 
         # get all messages and take last sent message
         messages = self.driver.find_elements(
-            By.CSS_SELECTOR, 'div.message-in span.selectable-text'
+            By.CSS_SELECTOR, 'div.message-in span[data-testid="selectable-text"]'
         )
         if messages:
-            message = messages[-1].text
+            message = messages[-1].get_attribute("span")
             print(f"Latest message: {message}")
             sent_img = self.driver.find_elements(
                 By.CSS_SELECTOR, 'div.message-in img.x15kfjtz'
