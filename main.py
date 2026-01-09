@@ -38,7 +38,8 @@ if operation_type.lower() == "single":
                     ai_messages = language_model.get_llm_response(
                         text=f"{contact} said: {latest_msg}",
                         session_id=target_chat,
-                        img_base64=img_base64
+                        img_base64=img_base64,
+                        contact_name=contact
                     )
                     for ai_message in ai_messages:
                         driver.send_message(message=ai_message)
@@ -77,7 +78,8 @@ elif operation_type.lower() == "multiple":
                             ai_message = language_model.get_llm_response(
                                 text=latest_msg_from_contact,
                                 session_id=unread_contact,
-                                img_base64=img_base64
+                                img_base64=img_base64,
+                                contact_name=contact
                             )
                             driver.send_message(message=ai_message)
                         last_msg_dict[unread_contact] = latest_msg_from_contact
