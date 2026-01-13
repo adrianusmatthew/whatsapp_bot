@@ -4,7 +4,7 @@ Provides convenient methods for storing and retrieving contact personalities and
 """
 from typing import Optional, Dict, Any, List
 from langgraph_memory import SQLiteStore, StoreValue, create_whatsapp_namespace
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class MemoryManager:
@@ -60,8 +60,8 @@ class MemoryManager:
         
         # Add/update timestamps
         if "first_interaction" not in profile:
-            profile["first_interaction"] = datetime.utcnow().isoformat()
-        profile["last_interaction"] = datetime.utcnow().isoformat()
+            profile["first_interaction"] = datetime.now(timezone.utc).isoformat()
+        profile["last_interaction"] = datetime.now(timezone.utc).isoformat()
         profile["is_group"] = is_group
         
         # Save to store
@@ -96,7 +96,7 @@ class MemoryManager:
         namespace = create_whatsapp_namespace(contact_name, is_group)
         
         # Create unique key with timestamp
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
         key = f"memory_{memory_type}_{timestamp}"
         
         memory = {
@@ -104,7 +104,7 @@ class MemoryManager:
             "memory_type": memory_type,
             "importance": importance,
             "tags": tags or [],
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.now(timezone.utc).isoformat()
         }
         
         self.store.put(namespace, key, memory)
@@ -229,8 +229,8 @@ class MemoryManager:
         
         # Add/update timestamps
         if "first_awareness" not in profile:
-            profile["first_awareness"] = datetime.utcnow().isoformat()
-        profile["last_updated"] = datetime.utcnow().isoformat()
+            profile["first_awareness"] = datetime.now(timezone.utc).isoformat()
+        profile["last_updated"] = datetime.now(timezone.utc).isoformat()
         
         # Save to store
         self.store.put(self.ai_namespace, "self_profile", profile)
@@ -254,14 +254,14 @@ class MemoryManager:
         - "I prefer giving detailed technical explanations"
         - "I feel more comfortable with casual conversation styles"
         """
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
         key = f"self_observation_{timestamp}"
         
         observation_data = {
             "content": observation,
             "importance": importance,
             "tags": tags or [],
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.now(timezone.utc).isoformat()
         }
         
         self.store.put(self.ai_namespace, key, observation_data)
