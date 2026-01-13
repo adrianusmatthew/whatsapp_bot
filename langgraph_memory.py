@@ -31,7 +31,7 @@ class SQLiteStore:
         results = store.search(("whatsapp", "user", "john"), query="programming")
     """
     
-    def __init__(self, db_path: str = "whatsapp_memory.db", index: Optional[Dict] = None):
+    def __init__(self, db_path: str = "shorekeeper_memory.db", index: Optional[Dict] = None):
         """
         Initialize SQLite store.
         
