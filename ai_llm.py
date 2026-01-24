@@ -158,14 +158,14 @@ class LanguageModel:
         
         chat_history = self.get_session_history(session_id)
         
-        # Add/update system message with context
-        # Remove old system messages
+        # Create system message with context
+        system_message = SystemMessage(content=system_content)
+        
+        # Remove old system messages from chat history
         chat_history.messages = [
             msg for msg in chat_history.messages 
             if not isinstance(msg, SystemMessage)
         ]
-        # Add new system message at the beginning
-        chat_history.messages.insert(0, SystemMessage(content=system_content))
         
         # insert AI message to prevent trimmer throwing an error
         # due to empty chat history (only human/ai messages count)
@@ -183,7 +183,8 @@ class LanguageModel:
         
         response = self.with_message_history.invoke(
             {
-                "input": [HumanMessage(content=input)]
+                "input": [HumanMessage(content=input)],
+                "system_context": [system_message]
             },
             config=config,
         )
@@ -199,7 +200,8 @@ class LanguageModel:
             after_tool_response = self.with_message_history.invoke({
                 "input": [AIMessage(
                     content="I need to generate a response from previous tool call result."
-                )]
+                )],
+                "system_context": [system_message]
             }, config=config)
             gathered_response.append(after_tool_response.content)
             response = after_tool_response
