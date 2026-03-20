@@ -36,9 +36,15 @@ class WhatsappDriver:
         )
         search_box.click()
         time.sleep(randomize_wait())
-        # This should open message window immediately
+        # Search for contact
         search_box.send_keys(contact)
         search_box.send_keys(Keys.ENTER)
+        # Click on topmost result (usually is the contact)
+        contact = self.driver.find_element(
+            By.CSS_SELECTOR,
+            'span.matched-text'
+        )
+        contact.click()
         # Now to clear search box for next search
         time.sleep(randomize_wait())
         cancel_search_button = self.driver.find_element(
